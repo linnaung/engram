@@ -135,6 +135,10 @@ class ConceptStore(BaseStore):
     def delete(self, concept_id: str) -> bool:
         """Delete a concept by ID."""
         try:
+            # Check if it exists first
+            existing = self.collection.get(ids=[concept_id])
+            if not existing["ids"]:
+                return False
             self.collection.delete(ids=[concept_id])
             return True
         except Exception:
@@ -146,7 +150,8 @@ class ConceptStore(BaseStore):
 
     def _result_to_concept(self, result: dict, idx: int) -> Concept:
         meta = result["metadatas"][idx]
-        raw_embedding = result["embeddings"][idx] if result.get("embeddings") else None
+        raw_emb = result.get("embeddings")
+        raw_embedding = raw_emb[idx] if raw_emb is not None and len(raw_emb) > idx else None
         embedding = list(raw_embedding) if raw_embedding is not None else []
         return Concept(
             id=result["ids"][idx],

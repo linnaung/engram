@@ -83,6 +83,39 @@ class Belief:
 
 
 @dataclass
+class Fact:
+    """L2.5: Structured triple grounded against an optional ontology.
+
+    Facts sit between Concepts (free text) and Beliefs (abstract principles).
+    They represent concrete, typed assertions: (subject, predicate, object).
+    When a domain ontology is loaded, entities are typed and predicates validated.
+    """
+
+    subject: str
+    predicate: str
+    object: str
+    subject_type: str = ""  # from ontology, e.g. "Protein"
+    object_type: str = ""   # from ontology, e.g. "Gene"
+    source_concept_ids: list[str] = field(default_factory=list)
+    id: str = field(default_factory=_uuid)
+    timestamp: datetime = field(default_factory=_now)
+    confidence: float = 0.85
+    half_life_days: float = 180.0
+    metadata: dict[str, Any] = field(default_factory=dict)
+
+    @property
+    def half_life(self) -> timedelta:
+        return timedelta(days=self.half_life_days)
+
+    @property
+    def triple_text(self) -> str:
+        """Human readable representation of the triple."""
+        s = f"{self.subject} [{self.subject_type}]" if self.subject_type else self.subject
+        o = f"{self.object} [{self.object_type}]" if self.object_type else self.object
+        return f"{s} {self.predicate} {o}"
+
+
+@dataclass
 class Edge:
     """Relationship between two beliefs in the knowledge graph."""
 
@@ -99,7 +132,7 @@ class RecallResult:
     """A single result from hybrid retrieval, with provenance."""
 
     content: str
-    layer: str  # "episode", "concept", "belief"
+    layer: str  # "episode", "concept", "fact", "belief"
     score: float
     confidence: float
     source_id: str

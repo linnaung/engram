@@ -20,14 +20,19 @@ class EngineConfig(BaseSettings):
     ollama_model: str = Field(default="llama3.2", description="Ollama model name")
     ollama_host: str = Field(default="http://localhost:11434", description="Ollama server URL")
 
+    # Context (optional domain ontology)
+    context_file: str = Field(default="", description="Path to ontology JSON file (empty = no ontology)")
+
     # Decay defaults
     episode_half_life_days: float = Field(default=7.0)
     concept_half_life_days: float = Field(default=90.0)
+    fact_half_life_days: float = Field(default=180.0)
     belief_half_life_days: float = Field(default=365.0)
 
-    # Retrieval weights
-    vector_weight: float = Field(default=0.60)
-    graph_weight: float = Field(default=0.25)
+    # Retrieval weights (must sum to 1.0)
+    vector_weight: float = Field(default=0.50)
+    graph_weight: float = Field(default=0.20)
+    fact_weight: float = Field(default=0.15)
     recency_weight: float = Field(default=0.15)
 
     # Confidence thresholds

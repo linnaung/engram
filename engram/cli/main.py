@@ -88,6 +88,8 @@ def synthesize():
         result = engine.synthesize_sync()
         click.echo(f"  Episodes processed:        {result['episodes_processed']}")
         click.echo(f"  Concepts created:          {result['concepts_created']}")
+        click.echo(f"  Facts extracted:           {result.get('facts_created', 0)}")
+        click.echo(f"  Fact contradictions:       {result.get('fact_contradictions', 0)}")
         click.echo(f"  Concepts merged (dedup):   {result.get('concepts_merged', 0)}")
         click.echo(f"  Beliefs created:           {result['beliefs_created']}")
         click.echo(f"  Edges created:             {result['edges_created']}")
@@ -110,11 +112,13 @@ def status(json_output: bool):
         else:
             click.echo("Engram Memory Status")
             click.echo("=" * 40)
-            click.echo(f"  L1 Episodes:  {stats['episodes']}")
-            click.echo(f"  L2 Concepts:  {stats['concepts']}")
-            click.echo(f"  L3 Beliefs:   {stats['beliefs']}")
-            click.echo(f"  Graph Edges:  {stats['edges']}")
-            click.echo(f"  Data dir:     {stats['data_dir']}")
+            click.echo(f"  L1 Episodes:   {stats['episodes']}")
+            click.echo(f"  L2 Concepts:   {stats['concepts']}")
+            click.echo(f"  L2.5 Facts:    {stats['facts']}")
+            click.echo(f"  L3 Beliefs:    {stats['beliefs']}")
+            click.echo(f"  Graph Edges:   {stats['edges']}")
+            click.echo(f"  Context:       {'loaded' if stats.get('context_loaded') else 'none'}")
+            click.echo(f"  Data dir:      {stats['data_dir']}")
     finally:
         engine.close()
 
@@ -173,7 +177,7 @@ def chat(synth_interval: int):
 
             if text == "/status":
                 stats = session.status()
-                click.echo(f"  Episodes: {stats['episodes']} | Concepts: {stats['concepts']} | Beliefs: {stats['beliefs']} | Edges: {stats['edges']} | Turns: {stats['session_turns']}")
+                click.echo(f"  Episodes: {stats['episodes']} | Concepts: {stats['concepts']} | Facts: {stats['facts']} | Beliefs: {stats['beliefs']} | Edges: {stats['edges']} | Turns: {stats['session_turns']}")
                 continue
 
             if text == "/synthesize":
@@ -374,6 +378,78 @@ def _generate_graph_html(nodes: list, edges: list, stats: dict) -> str:
     </script>
 </body>
 </html>"""
+
+
+@cli.command("context")
+@click.argument("ontology_path")
+def load_context(ontology_path: str):
+    """Load a domain ontology from a JSON file.
+
+    Example: engram context examples/ontology_lifescience.json
+    """
+    from engram.context.loader import load_ontology
+
+    ctx = load_ontology(ontology_path)
+    click.echo(f"Loaded ontology from: {ontology_path}")
+    click.echo(f"  Types:      {len(ctx.list_types())}")
+    click.echo(f"  Predicates: {len(ctx.list_predicates())}")
+    click.echo(f"  Types:      {', '.join(ctx.list_types()[:10])}")
+    click.echo(f"  Predicates: {', '.join(ctx.list_predicates()[:10])}")
+    click.echo(f"\nTo use during synthesis, set:")
+    click.echo(f"  export ENGRAM_CONTEXT_FILE={ontology_path}")
+
+
+@cli.group("facts")
+def facts_group():
+    """Query and inspect extracted facts (L2.5 structured triples)."""
+
+
+@facts_group.command("list")
+@click.option("--limit", "-n", default=20, help="Max facts to show")
+def facts_list(limit: int):
+    """List all active facts."""
+    engine = _get_engine()
+    try:
+        all_facts = engine.facts.query(min_confidence=0.05)
+        if not all_facts:
+            click.echo("No facts extracted yet. Run 'engram synthesize' first.")
+            return
+
+        for i, f in enumerate(all_facts[:limit], 1):
+            type_info = ""
+            if f.subject_type or f.object_type:
+                type_info = f" ({f.subject_type} > {f.object_type})"
+            click.echo(f"  [{i}] {f.subject} {f.predicate} {f.object}{type_info}  (conf: {f.confidence:.2f})")
+
+        if len(all_facts) > limit:
+            click.echo(f"  ... and {len(all_facts) - limit} more")
+    finally:
+        engine.close()
+
+
+@facts_group.command("query")
+@click.argument("entity")
+def facts_query(entity: str):
+    """Query facts by entity name (searches subject and object)."""
+    engine = _get_engine()
+    try:
+        as_subject = engine.facts.query(subject=entity)
+        as_object = engine.facts.query(object=entity)
+
+        all_facts = {f.id: f for f in as_subject + as_object}
+
+        if not all_facts:
+            click.echo(f"No facts found for '{entity}'.")
+            return
+
+        click.echo(f"Facts about '{entity}':")
+        for f in all_facts.values():
+            type_info = ""
+            if f.subject_type or f.object_type:
+                type_info = f" ({f.subject_type} > {f.object_type})"
+            click.echo(f"  {f.subject} {f.predicate} {f.object}{type_info}  (conf: {f.confidence:.2f})")
+    finally:
+        engine.close()
 
 
 @cli.command()

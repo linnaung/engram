@@ -1,0 +1,181 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix eng: <http://engram.dev/ontology#> .
+
+# === Types ===
+
+eng:Entity a owl:Class .
+eng:Molecule a owl:Class ; rdfs:subClassOf eng:Entity .
+eng:Protein a owl:Class ; rdfs:subClassOf eng:Molecule .
+eng:Gene a owl:Class ; rdfs:subClassOf eng:Molecule .
+eng:RNA a owl:Class ; rdfs:subClassOf eng:Molecule .
+eng:SmallMolecule a owl:Class ; rdfs:subClassOf eng:Molecule .
+eng:Drug a owl:Class ; rdfs:subClassOf eng:SmallMolecule .
+eng:BiologicalProcess a owl:Class ; rdfs:subClassOf eng:Entity .
+eng:Pathway a owl:Class ; rdfs:subClassOf eng:BiologicalProcess .
+eng:Disease a owl:Class ; rdfs:subClassOf eng:Entity .
+eng:Cancer a owl:Class ; rdfs:subClassOf eng:Disease .
+eng:CellType a owl:Class ; rdfs:subClassOf eng:Entity .
+eng:Tissue a owl:Class ; rdfs:subClassOf eng:Entity .
+eng:Organ a owl:Class ; rdfs:subClassOf eng:Tissue .
+eng:Organism a owl:Class ; rdfs:subClassOf eng:Entity .
+eng:Phenotype a owl:Class ; rdfs:subClassOf eng:Entity .
+eng:ClinicalTrial a owl:Class ; rdfs:subClassOf eng:Entity .
+
+# === Predicates ===
+
+eng:inhibits a owl:ObjectProperty ;
+    rdfs:domain eng:Molecule ;
+    rdfs:range eng:Molecule .
+
+eng:activates a owl:ObjectProperty ;
+    rdfs:domain eng:Molecule ;
+    rdfs:range eng:Molecule .
+
+eng:binds_to a owl:ObjectProperty ;
+    rdfs:domain eng:Molecule ;
+    rdfs:range eng:Molecule .
+
+eng:phosphorylates a owl:ObjectProperty ;
+    rdfs:domain eng:Protein ;
+    rdfs:range eng:Protein .
+
+eng:regulates a owl:ObjectProperty ;
+    rdfs:domain eng:Molecule ;
+    rdfs:range eng:Molecule .
+
+eng:upregulates a owl:ObjectProperty ;
+    rdfs:domain eng:Molecule ;
+    rdfs:range eng:Gene .
+
+eng:downregulates a owl:ObjectProperty ;
+    rdfs:domain eng:Molecule ;
+    rdfs:range eng:Gene .
+
+eng:encodes a owl:ObjectProperty ;
+    rdfs:domain eng:Gene ;
+    rdfs:range eng:Protein .
+
+eng:expressed_in a owl:ObjectProperty ;
+    rdfs:domain eng:Gene ;
+    rdfs:range eng:Tissue .
+
+eng:treats a owl:ObjectProperty ;
+    rdfs:domain eng:Drug ;
+    rdfs:range eng:Disease .
+
+eng:causes a owl:ObjectProperty ;
+    rdfs:domain eng:Entity ;
+    rdfs:range eng:Disease .
+
+eng:associated_with a owl:ObjectProperty ;
+    rdfs:domain eng:Entity ;
+    rdfs:range eng:Entity .
+
+eng:biomarker_for a owl:ObjectProperty ;
+    rdfs:domain eng:Molecule ;
+    rdfs:range eng:Disease .
+
+eng:part_of a owl:ObjectProperty ;
+    rdfs:domain eng:Entity ;
+    rdfs:range eng:Entity .
+
+eng:located_in a owl:ObjectProperty ;
+    rdfs:domain eng:Molecule ;
+    rdfs:range eng:CellType .
+
+eng:interacts_with a owl:ObjectProperty ;
+    rdfs:domain eng:Molecule ;
+    rdfs:range eng:Molecule .
+
+# === Entities ===
+
+eng:p53 a owl:NamedIndividual, eng:Protein ;
+    rdfs:label "p53" ;
+    skos:altLabel "TP53", "tumor protein p53", "tp53", "P53" .
+
+eng:MDM2 a owl:NamedIndividual, eng:Gene ;
+    rdfs:label "MDM2" ;
+    skos:altLabel "HDM2", "mdm2" .
+
+eng:BRCA1 a owl:NamedIndividual, eng:Gene ;
+    rdfs:label "BRCA1" ;
+    skos:altLabel "brca1", "BRCA-1" .
+
+eng:BRCA2 a owl:NamedIndividual, eng:Gene ;
+    rdfs:label "BRCA2" ;
+    skos:altLabel "brca2", "BRCA-2" .
+
+eng:EGFR a owl:NamedIndividual, eng:Protein ;
+    rdfs:label "EGFR" ;
+    skos:altLabel "ErbB1", "HER1", "egfr" .
+
+eng:HER2 a owl:NamedIndividual, eng:Protein ;
+    rdfs:label "HER2" ;
+    skos:altLabel "ERBB2", "ErbB2", "her2" .
+
+eng:KRAS a owl:NamedIndividual, eng:Gene ;
+    rdfs:label "KRAS" ;
+    skos:altLabel "K-Ras", "kras" .
+
+eng:VEGF a owl:NamedIndividual, eng:Protein ;
+    rdfs:label "VEGF" ;
+    skos:altLabel "vegf", "VEGFA" .
+
+eng:PD-L1 a owl:NamedIndividual, eng:Protein ;
+    rdfs:label "PD-L1" ;
+    skos:altLabel "PDL1", "CD274", "pd-l1" .
+
+eng:PD-1 a owl:NamedIndividual, eng:Protein ;
+    rdfs:label "PD-1" ;
+    skos:altLabel "PD1", "PDCD1", "pd-1" .
+
+eng:insulin a owl:NamedIndividual, eng:Protein ;
+    rdfs:label "insulin" ;
+    skos:altLabel "Insulin" .
+
+eng:aspirin a owl:NamedIndividual, eng:Drug ;
+    rdfs:label "aspirin" ;
+    skos:altLabel "Aspirin", "acetylsalicylic acid", "ASA" .
+
+eng:imatinib a owl:NamedIndividual, eng:Drug ;
+    rdfs:label "imatinib" ;
+    skos:altLabel "Gleevec", "Glivec", "STI571" .
+
+eng:trastuzumab a owl:NamedIndividual, eng:Drug ;
+    rdfs:label "trastuzumab" ;
+    skos:altLabel "Herceptin", "herceptin" .
+
+eng:pembrolizumab a owl:NamedIndividual, eng:Drug ;
+    rdfs:label "pembrolizumab" ;
+    skos:altLabel "Keytruda", "keytruda" .
+
+eng:breast_cancer a owl:NamedIndividual, eng:Cancer ;
+    rdfs:label "breast_cancer" ;
+    skos:altLabel "breast cancer", "BC" .
+
+eng:lung_cancer a owl:NamedIndividual, eng:Cancer ;
+    rdfs:label "lung_cancer" ;
+    skos:altLabel "lung cancer", "NSCLC", "nsclc" .
+
+eng:leukemia a owl:NamedIndividual, eng:Cancer ;
+    rdfs:label "leukemia" ;
+    skos:altLabel "CML", "AML", "ALL" .
+
+eng:apoptosis a owl:NamedIndividual, eng:BiologicalProcess ;
+    rdfs:label "apoptosis" ;
+    skos:altLabel "programmed cell death", "cell death" .
+
+eng:angiogenesis a owl:NamedIndividual, eng:BiologicalProcess ;
+    rdfs:label "angiogenesis" ;
+    skos:altLabel "blood vessel formation" .
+
+eng:MAPK_pathway a owl:NamedIndividual, eng:Pathway ;
+    rdfs:label "MAPK_pathway" ;
+    skos:altLabel "MAPK pathway", "Ras-MAPK", "MAPK/ERK" .
+
+eng:PI3K_pathway a owl:NamedIndividual, eng:Pathway ;
+    rdfs:label "PI3K_pathway" ;
+    skos:altLabel "PI3K pathway", "PI3K/AKT", "PI3K-AKT" .

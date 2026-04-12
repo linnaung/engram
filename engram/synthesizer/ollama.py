@@ -51,7 +51,11 @@ class OllamaLLM(BaseLLM):
 
         # Trim trailing text after JSON
         try:
-            return json.loads(text)
+            parsed = json.loads(text)
+            # Fix: llama sometimes returns ["{ json string }", ...] instead of [{}, ...]
+            if isinstance(parsed, list) and parsed and isinstance(parsed[0], str):
+                parsed = [json.loads(item) if isinstance(item, str) else item for item in parsed]
+            return parsed
         except json.JSONDecodeError:
             # Try to find the matching closing bracket
             bracket = text[0] if text and text[0] in ("[", "{") else None

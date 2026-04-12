@@ -1,0 +1,114 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix eng: <http://engram.dev/ontology#> .
+
+# === Types ===
+
+eng:Entity a owl:Class .
+eng:Person a owl:Class ; rdfs:subClassOf eng:Entity .
+eng:User a owl:Class ; rdfs:subClassOf eng:Person .
+eng:Tool a owl:Class ; rdfs:subClassOf eng:Entity .
+eng:Language a owl:Class ; rdfs:subClassOf eng:Tool .
+eng:Framework a owl:Class ; rdfs:subClassOf eng:Tool .
+eng:Database a owl:Class ; rdfs:subClassOf eng:Tool .
+eng:Concept a owl:Class ; rdfs:subClassOf eng:Entity .
+eng:Pattern a owl:Class ; rdfs:subClassOf eng:Concept .
+eng:Principle a owl:Class ; rdfs:subClassOf eng:Concept .
+
+# === Predicates ===
+
+eng:prefers a owl:ObjectProperty ;
+    rdfs:domain eng:Person ;
+    rdfs:range eng:Entity .
+
+eng:dislikes a owl:ObjectProperty ;
+    rdfs:domain eng:Person ;
+    rdfs:range eng:Entity .
+
+eng:knows a owl:ObjectProperty ;
+    rdfs:domain eng:Person ;
+    rdfs:range eng:Entity .
+
+eng:uses a owl:ObjectProperty ;
+    rdfs:domain eng:Person ;
+    rdfs:range eng:Tool .
+
+eng:values a owl:ObjectProperty ;
+    rdfs:domain eng:Person ;
+    rdfs:range eng:Concept .
+
+eng:is_a a owl:ObjectProperty ;
+    rdfs:domain eng:Entity ;
+    rdfs:range eng:Entity .
+
+eng:related_to a owl:ObjectProperty ;
+    rdfs:domain eng:Entity ;
+    rdfs:range eng:Entity .
+
+eng:better_than a owl:ObjectProperty ;
+    rdfs:domain eng:Entity ;
+    rdfs:range eng:Entity .
+
+# === Entities ===
+
+eng:Python a owl:NamedIndividual, eng:Language ;
+    rdfs:label "Python" ;
+    skos:altLabel "python3", "Python3", "py" .
+
+eng:Rust a owl:NamedIndividual, eng:Language ;
+    rdfs:label "Rust" ;
+    skos:altLabel "rust-lang" .
+
+eng:Go a owl:NamedIndividual, eng:Language ;
+    rdfs:label "Go" ;
+    skos:altLabel "golang", "Golang" .
+
+eng:JavaScript a owl:NamedIndividual, eng:Language ;
+    rdfs:label "JavaScript" ;
+    skos:altLabel "JS", "js", "node" .
+
+eng:TypeScript a owl:NamedIndividual, eng:Language ;
+    rdfs:label "TypeScript" ;
+    skos:altLabel "TS", "ts" .
+
+eng:SQL a owl:NamedIndividual, eng:Language ;
+    rdfs:label "SQL" ;
+    skos:altLabel "sql" .
+
+eng:React a owl:NamedIndividual, eng:Framework ;
+    rdfs:label "React" ;
+    skos:altLabel "ReactJS", "react.js" .
+
+eng:FastAPI a owl:NamedIndividual, eng:Framework ;
+    rdfs:label "FastAPI" ;
+    skos:altLabel "fastapi" .
+
+eng:PostgreSQL a owl:NamedIndividual, eng:Database ;
+    rdfs:label "PostgreSQL" ;
+    skos:altLabel "Postgres", "postgres", "pg" .
+
+eng:SQLite a owl:NamedIndividual, eng:Database ;
+    rdfs:label "SQLite" ;
+    skos:altLabel "sqlite", "sqlite3" .
+
+eng:Redis a owl:NamedIndividual, eng:Database ;
+    rdfs:label "Redis" ;
+    skos:altLabel "redis" .
+
+eng:Neo4j a owl:NamedIndividual, eng:Database ;
+    rdfs:label "Neo4j" ;
+    skos:altLabel "neo4j" .
+
+eng:simplicity a owl:NamedIndividual, eng:Principle ;
+    rdfs:label "simplicity" ;
+    skos:altLabel "simple", "simpleness" .
+
+eng:readability a owl:NamedIndividual, eng:Principle ;
+    rdfs:label "readability" ;
+    skos:altLabel "readable" .
+
+eng:composability a owl:NamedIndividual, eng:Principle ;
+    rdfs:label "composability" ;
+    skos:altLabel "composable", "unix philosophy" .
