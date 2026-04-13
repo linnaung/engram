@@ -2,7 +2,7 @@
 
 **A local first AI memory system with probabilistic decay.**
 
-Engram is not another database. It's a memory engine that works the way biological memory does. Raw experiences compress into understanding, understanding grounds into structured facts, facts distill into wisdom, and everything fades unless it matters.
+Engram is a memory layer for AI, not a database. It sits on top of existing storage (SQLite, ChromaDB, NetworkX) and adds what they lack: compression, decay, contradiction resolution, and domain grounding. Raw experiences compress into understanding, understanding grounds into structured facts, facts distill into wisdom, and everything fades unless it matters.
 
 ![Dashboard](docs/screenshots/dashboard.png)
 
